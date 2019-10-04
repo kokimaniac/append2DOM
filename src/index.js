@@ -1,35 +1,14 @@
 /*
-let emailComponent = document.getElementById("email_component");
-//buttons
-let addButton = document.getElementsByClassName("add-element");
-//global variable
-let clicks = 1;
-
-addButton[0].addEventListener("click", function(e) {
-	let newContainer = document.createElement("div");
-	let fieldElement = document.createElement("input");
-	let buttonElement = document.createElement("button");
-	newContainer.className = e.target.parentNode.className;
-	fieldElement.className = "form-field";
-	fieldElement.name = `${e.target.previousElementSibling.name}[]`;
-	fieldElement.id = `${e.target.previousElementSibling}_${clicks}`;
-	fieldElement.value = clicks;
-	buttonElement.className = "del-element bt bt-danger";
-	buttonElement.innerText = "Del Element";
-	buttonElement.onclick = function (e) {
-		console.log(e.target.previousElementSibling.id);
-		e.target.previousElementSibling.parentNode.remove();
-	};
-	newContainer.appendChild(fieldElement);
-	newContainer.appendChild(buttonElement);
-	emailComponent.appendChild(newContainer);
-	clicks += 1;
-});
+*	author: Jorge Luis
+*	github: github.com/kokimaniac/append2DOM
+*
 */
+
 class AppendRemove {
 	rootComponent = undefined;
 	addButtonElement = [];
 	clicks = 1;
+	limitClicks = NaN;
 
 	setClicks (click) {
 		this.clicks = click;
@@ -50,55 +29,78 @@ class AppendRemove {
 	getRootComponent () {
 		return this.rootComponent;
 	}
-
 	addButtonEvent (rootId, index) {
 		this.setRootComponent(rootId);
+		let limitClicks = this.limitClicks;
 		let root = this.getRootComponent();
 		let count = this.getClicks();
 		let clicked = (count) => {
 			return this.setClicks(count);
 		}
-		this.addButtonElement[index != 0 ? index : 0].addEventListener("click", function(e) {
-			let childList = [];
-			let newContainer = document.createElement("div");
-			let buttonElement = document.createElement("button");
-			//let fieldElement = document.createElement("input");
-			newContainer.className = e.target.parentNode.className;
+		this.addButtonElement[index].addEventListener("click", function(e) {
+			/*
+			* All child elements from the parent container are store here
+			*/
+			if (count < limitClicks) {
+				let childList = Object.values(e.target.parentNode.children);
+				let newContainer = document.createElement("div");
+				let buttonElement = document.createElement("button");
+				newContainer.className = e.target.parentNode.className;
 
-			childList = Object.values(e.target.parentNode.children)
-
-			childList.map((child, index, arr) => {
-				if (index != arr.length-1) {
-					let formElement = document.createElement(child.tagName.toLowerCase());
-					Object.assign(formElement, {
-						className: child.className,
-						name: `${child.name}[]`,
-						id: `${child.id}_${count}`,
-						placeholder: child.placeholder
-					});
-					newContainer.appendChild(formElement);
-				}
-			})
-			Object.assign(buttonElement, {
-				className: "del-element bt bt-danger",
-				innerText: "Del Element",
-				onclick: function (e) {
-					e.target.parentNode.remove();
-					count-=1;
-					clicked(count);
-				}
-			})
-			newContainer.appendChild(buttonElement);
-			root.appendChild(newContainer);
-			count+=1;
-			clicked(count);
-		})
+				childList.map((child, index, arr) => {
+					/*
+					*	The last element it will not be stored. The last element will be created latter.
+					*/
+					if (index != arr.length-1) {
+						let formElement = document.createElement(child.tagName.toLowerCase());
+						if (child.tagName.toLowerCase() == "select") {
+							Object.assign(formElement, {
+								className: child.className,
+								name: `${child.name}[]`,
+								id: `${child.id}_${count}`,
+							});
+							for(let option=0; option<child.options.length; option++) {
+								formElement.options[formElement.options.length] = new Option(child.options[option].textContent, child.options[option].value);
+							}
+							newContainer.appendChild(formElement);
+						} else {
+							Object.assign(formElement, {
+								type: child.type,
+								className: child.className,
+								name: `${child.name}[]`,
+								id: `${child.id}_${count}`,
+								placeholder: child.placeholder,
+							});						
+							newContainer.appendChild(formElement);
+						}
+					}
+				})
+				Object.assign(buttonElement, {
+					type: "button",
+					className: "bt bt-danger",
+					innerText: "Remove Element",
+					onclick: function (e) {
+						e.target.parentNode.remove();
+						count-=1;
+						clicked(count);
+					}
+				})
+				newContainer.appendChild(buttonElement);
+				root.appendChild(newContainer);
+				count+=1;
+				clicked(count);
+			}
+		});
 	}
 
-	constructor(rootId, buttonClass, index) {
+	constructor(rootId, buttonClass, index, clicks) {
+		/*
+		*	root		: Is the root parent node.
+		*	buttonClass	: Is the className of button (required for executing the event)
+		*	index		: The index position of the class element (starts from 0 to n)
+		*/
+		this.limitClicks = clicks;
 		this.setAddButton(buttonClass);
 		this.addButtonEvent(rootId, index);
 	}
 }
-
-let emailComponent = new AppendRemove("email_component", "add-element", 0);
