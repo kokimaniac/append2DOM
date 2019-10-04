@@ -1,0 +1,78 @@
+/*
+* grid properties
+*/
+
+.container {
+	display: flex;
+	flex-direction: column;
+}
+
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+}
+
+.col {
+	padding: 10px 10px;
+}
+
+/*
+* form component properties
+*/
+
+.form-component {
+	display: flex;
+	flex-direction: column;
+	border-radius: 20px;
+	padding: 15px 15px;
+	box-shadow: 0px 0px 8px rgba(10, 10, 10, 0.5);
+}
+
+.form-field {
+	margin: 0px 10px 0px 10px;
+	border: none;
+	border-bottom: 1px solid gray;
+	width: auto;
+	font-size: 18px;
+	padding: 10px 10px;
+}
+
+/*
+* default button properties
+*/
+
+.bt {
+	margin: 20px 20px;
+	border: none;
+	color: white;
+	font-size: 17px;
+	padding: 10px 10px;
+	box-shadow: 0px 0px 4px gray;
+	border-radius: 20px;
+	background-color: transparent;
+}
+
+.bt:hover {
+	cursor: pointer;
+}
+
+/*
+* default buttons
+*/
+.bt.bt-default {
+	background-color: rgba(0, 0, 255, 0.65);
+}
+.bt.bt-danger {
+	background-color: rgba(255, 0, 0, 0.65);
+}
+
+/*
+* on hover buttons 
+*/
+.bt.bt-default:hover {
+	background-color: rgba(0, 0, 255, 0.85);
+}
+.bt.bt-danger:hover {
+	background-color: rgba(255, 0, 0, 0.85);
+}
